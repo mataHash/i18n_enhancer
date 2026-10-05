@@ -1,0 +1,9 @@
+{
+	"greeting": "hello",
+	"have": "you have",
+	"order": "order",
+	"send": "send",
+	"cancel": "cancel",
+	"total": "total",
+	"exit": "exit"
+}
