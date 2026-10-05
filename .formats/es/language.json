@@ -1,0 +1,9 @@
+{
+	"greeting": "hola",
+	"have": "tienes",
+	"order": "pedido",
+	"send": "enviar",
+	"cancel": "cancelar",
+	"total": "total",
+	"exit": "salir"
+}
