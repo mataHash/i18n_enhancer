@@ -1,0 +1,11 @@
+{
+	"saludo": "hello",
+	"tienes": "you have",
+	"pedidos": "orders",
+	"enviar": "send",
+	"cancelar": "cancel",
+	"moneda": "USD$",
+	"valor": "58.60",
+	"total": "total",
+	"salir": "exit"
+}

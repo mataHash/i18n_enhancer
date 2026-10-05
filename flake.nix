@@ -1,15 +1,11 @@
 {
-  description = "trial of rust";
+  description = "i18_enhancer";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/26.05";
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    ...
-  }: let
+  outputs = {nixpkgs, ...}: let
     inherit (nixpkgs) lib;
     supportedSystems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
     forAllSystems = f: lib.genAttrs supportedSystems (system: f system);
