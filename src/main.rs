@@ -1,86 +1,41 @@
-use serde::{Deserialize,Serialize};
-use std::fs;
-use chrono::{DateTime,Local};
-use format_num::NumberFormat;
+mod types;
+mod file_io;
+mod serialization;
+mod money;
+mod dates;
+mod message;
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Language {
-	saludo: String,
-    tienes: String,
-	pedidos: String,
-	enviar: String,
-	cancelar: String,
-	total: String,
-	salir: String
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct Currency {
-    moneda: String,
-    valor: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct DateFormat{
-    format: String,
-}
-struct Persona {
-    nombre: String,
-    cantidad_pedidos: u64,
-    precio: f64,
-}
 fn main() {
-// fecha = dia + "/" + mes + "/" + anio
-// boton.texto = "Enviar" 
-    let daury = Persona {
-        nombre: String::from("Daury"),
-        cantidad_pedidos: 98,
-        precio: 450f64
+    let daury = types::Persona{
+        name: String::from("daury"),
+        quantity_of_orders: 32,
+        price_per_order: 100f64
     };
-    let language =
-        fs::read_to_string("formats/en/language.json")
-        .expect("espected a file on language");
-    let currency = fs::read_to_string("formats/en/region/en-US/currency.json")
-        .expect("espected a file on currency");
-    let format = fs::read_to_string("formats/en/region/en-US/date.json")
-        .expect("espected a file on format");
+    let language = file_io::load_language("en");
+    let currency = file_io::load_currency("en-us");
+    let format = file_io::load_date_format("en-us");
 
-    let language: Language =
-        serde_json::from_str(&language)
-        .expect("failed to deserialize");
-    let currency: Currency =
-        serde_json::from_str(&currency)
-        .expect("failed to deserialize");
-
-    let format: DateFormat =
-        serde_json::from_str(&format)
-        .expect("failed to deserialize");
-
-    let cantidad_pedidos: f64 =
-        daury
-        .cantidad_pedidos
-        as f64;
-
-    let valor: f64 = currency
-        .valor
-        .parse()
-        .expect("couldn't parse int");
-
-    let message = format!("{} {}, {} {} {}",
-        language.saludo,
-        daury.nombre,
-        language.tienes,
-        daury.cantidad_pedidos,
-        language.pedidos);
-
+    let language = serialization::ser_lang(&language);
+    let currency = serialization::ser_curr(&currency);
+    let format = serialization::ser_format(&format);
+    
+    let message = message::parse_message(
+        &language.greeting,
+        &daury.name,
+        &language.have,
+        &daury.quantity_of_orders.to_string(),
+        &language.order
+    );
+    let money = money::parse_money(
+        daury.quantity_of_orders,
+        &currency.value,
+        daury.price_per_order,
+        &currency.symbol
+    );
+    let format = dates::parse_dates(&format.format);
     println!("{message}");
+    println!("{money}");
+    println!("{format}");
 
-    let precio = cantidad_pedidos * valor * daury.precio;
 
-    let  num = NumberFormat::new();
-    println!("{}{}",currency.moneda,  num.format(",.2f", precio));
-
-    let current_local: DateTime<Local> = Local::now();
-    let custom_format = current_local.format(&format.format);
-    println!("{custom_format}");
 }
