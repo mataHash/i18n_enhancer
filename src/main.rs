@@ -1,4 +1,3 @@
-mod io;
 mod dates;
 mod file_io;
 mod message;
